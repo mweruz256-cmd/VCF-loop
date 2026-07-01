@@ -1,7 +1,7 @@
 {
   "name": "nextgen-status-boost-vcf",
   "version": "1.0.0",
-  "description": "NextGen Status Boost - VCF Registration Campaign System",
+  "description": "VCF Registration Campaign System",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
