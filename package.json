@@ -1,16 +1,13 @@
 {
   "name": "nextgen-status-boost-vcf",
   "version": "1.0.0",
-  "description": "NextGen Status Boost - VCF Registration Campaign System",
+  "description": "VCF Registration Campaign System",
   "main": "server.js",
-  "engines": {
-    "node": ">=20.0.0"
-  },
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.19.2",
-    "better-sqlite3": "^11.0.0"
+    "@libsql/client-web": "^0.14.0"
   }
 }
