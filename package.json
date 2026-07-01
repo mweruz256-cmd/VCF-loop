@@ -1,0 +1,15 @@
+{
+  "name": "nextgen-status-boost-vcf",
+  "version": "1.0.0",
+  "description": "NextGen Status Boost - VCF Registration Campaign System",
+  "main": "server.js",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

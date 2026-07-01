@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>NextGen Status Boost</title>
+<style>
+  :root {
+    --bg-app: #0b141a;
+    --bg-panel: #111b21;
+    --bg-track: #222e35;
+    --accent: #00a884;
+    --accent-bright: #00e676;
+    --text-primary: #e9edef;
+    --text-secondary: #8696a0;
+    --danger: #f15c4f;
+    --border: #2a3942;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-app);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 20px 14px 60px;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .brand {
+    text-align: center;
+    padding: 8px 0 4px;
+  }
+  .brand h1 {
+    font-size: 20px;
+    margin: 0;
+    letter-spacing: 0.2px;
+  }
+  .brand p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+
+  /* ---------- Section A: Live Dashboard ---------- */
+  .live-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .live-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 rgba(0, 168, 132, 0.6);
+    animation: pulse 1.6s infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(0, 168, 132, 0.55); }
+    70%  { box-shadow: 0 0 0 8px rgba(0, 168, 132, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 168, 132, 0); }
+  }
+  .live-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .counter {
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1;
+    margin: 4px 0 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .counter .target {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 24px;
+  }
+
+  .track {
+    width: 100%;
+    height: 12px;
+    background: var(--bg-track);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent-bright), var(--accent));
+    transition: width 0.6s ease;
+  }
+  .pct-label {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-align: right;
+  }
+
+  /* ---------- Section B: Registration Form ---------- */
+  .card h2 {
+    font-size: 15px;
+    margin: 0 0 16px;
+    color: var(--text-primary);
+  }
+
+  .field {
+    position: relative;
+    margin-bottom: 16px;
+  }
+  .field input {
+    width: 100%;
+    background: var(--bg-track);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 14px 8px;
+    font-size: 15px;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .field input:focus {
+    border-color: var(--accent);
+  }
+  .field label {
+    position: absolute;
+    left: 14px;
+    top: 14px;
+    font-size: 15px;
+    color: var(--text-secondary);
+    pointer-events: none;
+    transition: all 0.15s ease;
+  }
+  .field input:focus + label,
+  .field input.filled + label {
+    top: 6px;
+    font-size: 11px;
+    color: var(--accent);
+  }
+  .field input::placeholder {
+    color: transparent;
+  }
+  .field input:focus::placeholder {
+    color: #55636b;
+  }
+
+  .hint {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: -10px;
+    margin-bottom: 16px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #041412;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled {
+    background: #0f5c4a;
+    cursor: not-allowed;
+  }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(4, 20, 18, 0.35);
+    border-top-color: #041412;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .submit-btn.loading .spinner { display: inline-block; }
+  .submit-btn.loading .btn-text { display: none; }
+
+  .form-msg {
+    margin-top: 12px;
+    font-size: 13px;
+    text-align: center;
+    display: none;
+    padding: 10px 12px;
+    border-radius: 8px;
+  }
+  .form-msg.error {
+    display: block;
+    background: rgba(241, 92, 79, 0.12);
+    color: var(--danger);
+    border: 1px solid rgba(241, 92, 79, 0.3);
+  }
+  .form-msg.success {
+    display: block;
+    background: rgba(0, 168, 132, 0.12);
+    color: var(--accent-bright);
+    border: 1px solid rgba(0, 168, 132, 0.3);
+  }
+
+  /* ---------- Section C: Download Zone ---------- */
+  .download-btn {
+    width: 100%;
+    padding: 18px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(90deg, var(--accent-bright), var(--accent));
+    color: #041412;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    text-align: center;
+    animation: glow 1.8s infinite;
+    text-decoration: none;
+    display: block;
+  }
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.35); }
+    50% { box-shadow: 0 0 24px 6px rgba(0, 230, 118, 0.35); }
+  }
+  .unlock-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 10px;
+  }
+
+  .hidden { display: none !important; }
+
+  footer {
+    text-align: center;
+    font-size: 11px;
+    color: #4a5a63;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="brand">
+    <h1>🚀 NextGen Status Boost</h1>
+    <p>Join the round. Unlock the list. Boost every status view.</p>
+  </div>
+
+  <!-- Section A: Live Dashboard -->
+  <div class="card">
+    <div class="live-row">
+      <span class="live-dot"></span>
+      <span class="live-label">Live Tracking Active</span>
+    </div>
+    <div class="counter">
+      <span id="countValue">0</span> / <span class="target" id="targetValue">1500</span>
+    </div>
+    <div class="track">
+      <div class="fill" id="fillBar"></div>
+    </div>
+    <div class="pct-label" id="pctLabel">0% filled</div>
+  </div>
+
+  <!-- Section B: Registration Form -->
+  <div class="card" id="formCard">
+    <h2>Register your WhatsApp number</h2>
+    <form id="registerForm" autocomplete="off">
+      <div class="field">
+        <input type="text" id="nameInput" placeholder="John Dropship" required>
+        <label for="nameInput">Display Name</label>
+      </div>
+      <div class="field">
+        <input type="tel" id="phoneInput" placeholder="+256701234567" value="+" required>
+        <label for="phoneInput">WhatsApp Number</label>
+      </div>
+      <div class="hint">Include your country code, e.g. +256701234567</div>
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span class="btn-text">Join the Round</span>
+        <span class="spinner"></span>
+      </button>
+      <div class="form-msg" id="formMsg"></div>
+    </form>
+  </div>
+
+  <!-- Section C: Download Zone -->
+  <div class="card hidden" id="downloadCard">
+    <a href="/api/download" class="download-btn" id="downloadBtn">📥 DOWNLOAD COMPILED VCF FILE</a>
+    <div class="unlock-note">Target reached — the full contact list is unlocked for everyone.</div>
+  </div>
+
+  <footer>NextGen Status Boost &middot; Powered by mutual contact sync</footer>
+</div>
+
+<script>
+(function () {
+  const countValue = document.getElementById('countValue');
+  const targetValue = document.getElementById('targetValue');
+  const fillBar = document.getElementById('fillBar');
+  const pctLabel = document.getElementById('pctLabel');
+  const formCard = document.getElementById('formCard');
+  const downloadCard = document.getElementById('downloadCard');
+  const registerForm = document.getElementById('registerForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const formMsg = document.getElementById('formMsg');
+  const nameInput = document.getElementById('nameInput');
+  const phoneInput = document.getElementById('phoneInput');
+
+  let unlocked = false;
+
+  // Floating label "filled" state tracking
+  [nameInput, phoneInput].forEach((input) => {
+    const sync = () => input.classList.toggle('filled', input.value.trim().length > 0);
+    input.addEventListener('input', sync);
+    sync();
+  });
+
+  // Keep the leading "+" in the phone field
+  phoneInput.addEventListener('input', () => {
+    if (!phoneInput.value.startsWith('+')) {
+      phoneInput.value = '+' + phoneInput.value.replace(/\+/g, '');
+    }
+  });
+
+  function renderStatus(count, target) {
+    countValue.textContent = count;
+    targetValue.textContent = target;
+    const pct = target > 0 ? Math.min(100, (count / target) * 100) : 0;
+    fillBar.style.width = pct.toFixed(2) + '%';
+    pctLabel.textContent = pct.toFixed(1) + '% filled';
+
+    const shouldUnlock = count >= target;
+    if (shouldUnlock !== unlocked) {
+      unlocked = shouldUnlock;
+      formCard.classList.toggle('hidden', unlocked);
+      downloadCard.classList.toggle('hidden', !unlocked);
+    }
+  }
+
+  async function pollStatus() {
+    try {
+      const res = await fetch('/api/status');
+      const data = await res.json();
+      renderStatus(data.count, data.target);
+    } catch (err) {
+      // Silent fail — the next interval tick will retry.
+      console.error('Status poll failed', err);
+    }
+  }
+
+  pollStatus();
+  setInterval(pollStatus, 6000);
+
+  registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (submitBtn.classList.contains('loading')) return; // prevent double-submit
+
+    formMsg.className = 'form-msg';
+    formMsg.textContent = '';
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+
+    const payload = {
+      name: nameInput.value.trim(),
+      phone: phoneInput.value.trim(),
+    };
+
+    try {
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        formMsg.textContent = data.error || 'Something went wrong. Please try again.';
+        formMsg.className = 'form-msg error';
+      } else {
+        formMsg.textContent = "You're in! Thanks for joining the round.";
+        formMsg.className = 'form-msg success';
+        registerForm.reset();
+        phoneInput.value = '+';
+        [nameInput, phoneInput].forEach((i) => i.classList.remove('filled'));
+        renderStatus(data.count, data.target);
+      }
+    } catch (err) {
+      formMsg.textContent = 'Network error. Please check your connection and try again.';
+      formMsg.className = 'form-msg error';
+    } finally {
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled = false;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
