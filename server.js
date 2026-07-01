@@ -5,17 +5,17 @@
 
 const express = require('express');
 const path = require('path');
-const { createClient } = require('@libsql/client');
+const { createClient } = require('@libsql/client-web');
 
 const PORT = process.env.PORT || 3000;
 
-// Connect to Turso using the secret keys you added in Vercel
+// Connect to Turso using the secret environment keys added in Vercel
 const db = createClient({
   url: process.env.TURSO_DATABASE_URL,
   authToken: process.env.TURSO_AUTH_TOKEN,
 });
 
-// Initialize database tables in the cloud
+// Initialize database tables in the cloud securely
 async function initDb() {
   try {
     await db.execute(`
@@ -47,25 +47,34 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Helper functions to talk to cloud database asynchronously
+// Helper functions to pull rows correctly from the cloud database
 async function getTarget() {
-  const rs = await db.execute({
-    sql: "SELECT value FROM settings WHERE key = 'target_count'",
-    args: []
-  });
-  return rs.rows.length ? parseInt(rs.rows[0].value, 10) : 1500;
+  try {
+    const rs = await db.execute("SELECT value FROM settings WHERE key = 'target_count'");
+    return rs.rows.length ? parseInt(rs.rows[0].value, 10) : 1500;
+  } catch (err) {
+    console.error("Error fetching target:", err);
+    return 1500;
+  }
 }
 
 async function getCount() {
-  const rs = await db.execute({
-    sql: "SELECT COUNT(*) AS count FROM contacts",
-    args: []
-  });
-  return rs.rows[0].count;
+  try {
+    const rs = await db.execute("SELECT COUNT(*) AS count FROM contacts");
+    if (!rs.rows.length) return 0;
+    
+    // Safely check for named key or index value array fallbacks
+    const firstRow = rs.rows[0];
+    if (firstRow.count !== undefined) return Number(firstRow.count);
+    return Number(Object.values(firstRow)[0]);
+  } catch (err) {
+    console.error("Error fetching count:", err);
+    return 0;
+  }
 }
 
 // ---------------------------------------------------------------------------
-// Public API
+// Public User API Endpoints
 // ---------------------------------------------------------------------------
 
 app.get('/api/status', async (req, res) => {
@@ -134,14 +143,19 @@ app.get('/api/download', async (req, res) => {
 
     const rs = await db.execute("SELECT id, name, phone FROM contacts ORDER BY id ASC");
     let buffer = '';
+    
     rs.rows.forEach((row, index) => {
-      const label = `Gain ${index + 1} (${row.name})`;
+      // Safe fallback variables if properties are read by array indexes
+      const rowName = row.name !== undefined ? row.name : Object.values(row)[1];
+      const rowPhone = row.phone !== undefined ? row.phone : Object.values(row)[2];
+      
+      const label = `Gain ${index + 1} (${rowName})`;
       buffer +=
         `BEGIN:VCARD\n` +
         `VERSION:3.0\n` +
         `N:;${label};;;\n` +
         `FN:${label}\n` +
-        `TEL;TYPE=CELL:${row.phone}\n` +
+        `TEL;TYPE=CELL:${rowPhone}\n` +
         `END:VCARD\n`;
     });
 
@@ -154,7 +168,7 @@ app.get('/api/download', async (req, res) => {
 });
 
 // ---------------------------------------------------------------------------
-// Admin API
+// Private System Admin API Endpoints
 // ---------------------------------------------------------------------------
 
 app.post('/api/admin/target', async (req, res) => {
@@ -198,5 +212,5 @@ app.get('/api/admin/state', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running smoothly on port ${PORT}`);
 });
